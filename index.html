@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The North Star 💫</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Tailwind gray-50 */
+        }
+        .fade-in {
+            animation: fadeInAnimation 0.5s ease-in forwards;
+        }
+        .fade-out {
+            animation: fadeOutAnimation 0.5s ease-out forwards;
+        }
+        @keyframes fadeInAnimation {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOutAnimation {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); display: none; }
+        }
+        .card-hover-effect {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
+
+        <!-- Header -->
+        <header class="w-full max-w-5xl mx-auto absolute top-0 left-0 right-0 p-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                 <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-5.22-6.22l5.22 6.22 5.22-6.22M3 12.003h18"></path></svg>
+                <h1 class="text-2xl font-bold text-gray-900">NorthStar <span class="text-indigo-600">AI</span></h1>
+            </div>
+            <button id="restartButton" class="hidden text-sm font-medium text-indigo-600 hover:text-indigo-800" onclick="restartJourney()">Start Over</button>
+        </header>
+        
+        <main class="w-full">
+            <!-- Step 1: Landing Page -->
+            <section id="landing" class="text-center fade-in">
+                <div class="max-w-3xl mx-auto">
+                    <div class="inline-block bg-indigo-100 text-indigo-700 text-sm font-semibold px-4 py-1 rounded-full mb-4">
+                        Powered by AI ✨
+                    </div>
+                    <h2 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight">Confused about your career?</h2>
+                    <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+                        Find your direction in the next 5 minutes. The NorthStar AI combines psychometric analysis with your interests to craft a personalized career roadmap just for you.
+                    </p>
+                    <button onclick="showNext('onboarding')" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transition-transform transform hover:scale-105">
+                        Start My Journey
+                    </button>
+                </div>
+            </section>
+
+            <!-- Step 2: User Onboarding & Profiling -->
+            <section id="onboarding" class="hidden max-w-2xl mx-auto fade-in">
+                <div class="bg-white p-8 rounded-2xl shadow-xl">
+                    <h3 class="text-2xl font-bold text-center mb-1">Let's Get to Know You</h3>
+                    <p class="text-gray-500 text-center mb-6">This will help us personalize your recommendations.</p>
+                    <form id="profileForm" onsubmit="event.preventDefault(); showNext('quiz');">
+                        <div class="space-y-6">
+                            <div>
+                                <label for="educationStage" class="block text-sm font-medium text-gray-700 mb-1">Current Educational Stage</label>
+                                <select id="educationStage" name="educationStage" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="">Select your stage</option>
+                                    <option value="high-school">Class 11-12</option>
+                                    <option value="undergraduate">Undergraduate</option>
+                                    <option value="graduate">Graduate/Working Professional</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label for="stream" class="block text-sm font-medium text-gray-700 mb-1">Your Stream / Major</label>
+                                <input type="text" id="stream" name="stream" required placeholder="e.g., Science with Maths, B.Tech CSE, MBA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Which subjects do you enjoy the most?</label>
+                                <div id="subject-tags" class="flex flex-wrap gap-2">
+                                    <!-- Subject tags will be injected here by JS -->
+                                </div>
+                                <input type="hidden" id="selectedSubjects" name="selectedSubjects">
+                            </div>
+                        </div>
+                        <div class="mt-8 text-center">
+                            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transition-transform transform hover:scale-105">
+                                Next: The Quiz
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Step 3: Psychometric Quiz -->
+            <section id="quiz" class="hidden max-w-2xl mx-auto fade-in">
+                 <div class="bg-white p-8 rounded-2xl shadow-xl">
+                    <div id="quiz-intro">
+                        <h3 class="text-2xl font-bold text-center mb-1">The Discovery Quiz</h3>
+                        <p class="text-gray-500 text-center mb-6">This quick quiz helps us understand your work style. There are no wrong answers!</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                            <div id="progressBar" class="bg-indigo-600 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <p id="questionCounter" class="text-center text-sm text-gray-500 mb-4">Question 1 of 5</p>
+                        <div id="quiz-container">
+                            <!-- Questions will be injected here -->
+                        </div>
+                    </div>
+                    <div id="quiz-analysis" class="hidden text-center">
+                        <svg class="animate-spin h-12 w-12 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <h3 class="text-2xl font-bold mt-4">Analyzing your results...</h3>
+                        <p class="text-gray-500">Crafting your career archetype.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4: Recommendations Engine Output -->
+            <section id="recommendations" class="hidden max-w-4xl mx-auto fade-in">
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-bold">Your Career Archetype: <span id="archetypeResult" class="text-indigo-600"></span></h3>
+                    <p class="text-gray-600 mt-2">Based on your profile and quiz, here are the top career paths we recommend for you.</p>
+                </div>
+                <div id="recommendations-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Recommendation cards will be injected here -->
+                </div>
+            </section>
+            
+            <!-- Step 5: Career Roadmap -->
+            <section id="roadmap" class="hidden max-w-4xl mx-auto fade-in">
+                 <div class="bg-white p-8 rounded-2xl shadow-xl">
+                    <button onclick="showNext('recommendations', true)" class="mb-6 text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Back to Recommendations
+                    </button>
+                    <h2 class="text-3xl font-extrabold mb-2">Your Roadmap to Becoming a <span id="roadmapTitle" class="text-indigo-600"></span></h2>
+                    <p class="text-gray-500 mb-8" id="roadmapDescription"></p>
+                    <div id="roadmap-container" class="space-y-8 relative border-l-2 border-indigo-200 pl-6">
+                         <!-- Roadmap steps will be injected here -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+<script>
+    // --- DATABASE ---
+    const subjects = ['Physics', 'Mathematics', 'Biology', 'Chemistry', 'Computer Science', 'History', 'Economics', 'Business Studies', 'Art & Design', 'Literature'];
+
+    const quizQuestions = [
+        {
+            question: "When faced with a complex problem, you...",
+            options: [
+                { text: "Break it down into smaller, logical steps.", archetype: "Analytical" },
+                { text: "Brainstorm creative, out-of-the-box solutions.", archetype: "Creative" },
+                { text: "Collaborate with others to find a solution.", archetype: "Social" },
+                { text: "Take charge and organize a plan to tackle it.", archetype: "Enterprising" }
+            ]
+        },
+        {
+            question: "Which work environment sounds most appealing?",
+            options: [
+                { text: "A quiet space where you can focus on data and details.", archetype: "Analytical" },
+                { text: "A vibrant, dynamic studio where new ideas are welcome.", archetype: "Creative" },
+                { text: "A community-focused setting where you help people.", archetype: "Social" },
+                { text: "A fast-paced office where you can lead projects and achieve goals.", archetype: "Enterprising" }
+            ]
+        },
+        {
+            question: "You are most proud of your ability to...",
+            options: [
+                { text: "Analyze and understand complex systems.", archetype: "Analytical" },
+                { text: "Imagine and create something entirely new.", archetype: "Creative" },
+                { text: "Connect with and understand other people.", archetype: "Social" },
+                { text: "Persuade others and drive results.", archetype: "Enterprising" }
+            ]
+        },
+        {
+            question: "A project is successful for you when...",
+            options: [
+                { text: "The data is accurate and the conclusion is logical.", archetype: "Analytical" },
+                { text: "The final product is beautiful and innovative.", archetype: "Creative" },
+                { text: "It makes a positive impact on people's lives.", archetype: "Social" },
+                { text: "It exceeds targets and is financially successful.", archetype: "Enterprising" }
+            ]
+        },
+        {
+            question: "You'd rather spend an afternoon...",
+            options: [
+                { text: "Solving a challenging puzzle or coding problem.", archetype: "Analytical" },
+                { text: "Designing, painting, or writing.", archetype: "Creative" },
+                { text: "Volunteering or teaching someone a new skill.", archetype: "Social" },
+                { text: "Developing a business plan or organizing an event.", archetype: "Enterprising" }
+            ]
+        }
+    ];
+
+    const archetypes = {
+        "Analytical": { name: "Analytical Architect", description: "You are a logical thinker who excels at problem-solving and data analysis. You thrive on finding patterns and creating efficient systems." },
+        "Creative": { name: "Creative Visionary", description: "You are an innovator and artist at heart. You excel at thinking outside the box and bringing new ideas to life through design and expression." },
+        "Social": { name: "Social Connector", description: "You are empathetic and an excellent communicator. You find fulfillment in helping others, building communities, and fostering collaboration." },
+        "Enterprising": { name: "Enterprising Leader", description: "You are ambitious, persuasive, and a natural leader. You enjoy taking initiative, managing projects, and driving towards ambitious goals." }
+    };
+    
+    const careers = [
+        { title: "Machine Learning Engineer", archetype: "Analytical", tags: ["Computer Science", "Mathematics"], description: "Teach machines to learn from data to make predictions and decisions.", roadmap: [ { stage: "Foundation (High School / 1st Year)", details: "Strengthen your Math (Calculus, Linear Algebra, Probability). Master Python fundamentals." }, { stage: "Skill Building (College Years 2-3)", details: "Take courses on Data Structures, Algorithms, and AI. Build projects like a movie recommender or image classifier." }, { stage: "Specialization (Final Year & Beyond)", details: "Study Deep Learning & NLP. Get certified (e.g., TensorFlow Developer) and apply for internships." } ] },
+        { title: "Data Scientist", archetype: "Analytical", tags: ["Mathematics", "Economics"], description: "Analyze and interpret complex data to help organizations make better decisions.", roadmap: [ { stage: "Foundation (High School / 1st Year)", details: "Focus on Statistics and Mathematics. Learn Python and SQL for data manipulation." }, { stage: "Skill Building (College Years 2-3)", details: "Learn data visualization tools (Tableau, PowerBI) and machine learning concepts. Work on datasets from Kaggle." }, { stage: "Specialization (Final Year & Beyond)", details: "Specialize in an area like finance or healthcare. Build a strong portfolio of data analysis projects." } ] },
+        { title: "UX/UI Designer", archetype: "Creative", tags: ["Art & Design", "Computer Science"], description: "Design intuitive and beautiful digital products that are easy and enjoyable to use.", roadmap: [ { stage: "Foundation", details: "Learn design principles (color theory, typography). Master tools like Figma and Adobe XD through online tutorials." }, { stage: "Skill Building", details: "Build a portfolio by redesigning existing apps or creating your own concepts. Understand user research and wireframing." }, { stage: "Professional Growth", details: "Seek internships to gain real-world experience. Collect user feedback to iterate on your designs and build case studies." } ] },
+        { title: "Digital Marketing Manager", archetype: "Enterprising", tags: ["Business Studies", "Literature"], description: "Create and manage marketing campaigns that promote a company's brand, products, and services online.", roadmap: [ { stage: "Foundation", details: "Understand marketing fundamentals. Get certified in Google Ads and Analytics." }, { stage: "Skill Building", details: "Learn SEO, content marketing, and social media management. Start a blog or manage a social media page to practice." }, { stage: "Professional Growth", details: "Manage small freelance projects or seek an internship. Learn to analyze campaign data and calculate ROI." } ] },
+        { title: "Social Worker", archetype: "Social", tags: ["History", "Literature"], description: "Help individuals and families improve their lives and cope with challenges.", roadmap: [ { stage: "Education", details: "Pursue a Bachelor's (BSW) and then a Master's (MSW) in Social Work." }, { stage: "Field Work", details: "Gain practical experience through mandatory internships and volunteering at NGOs or community centers." }, { stage: "Licensing & Specialization", details: "Obtain the necessary license to practice in your region. Specialize in areas like child welfare, mental health, or medical social work." } ] },
+        { title: "Product Manager", archetype: "Enterprising", tags: ["Business Studies", "Computer Science"], description: "Guide the success of a product and lead the cross-functional team that is responsible for improving it.", roadmap: [ { stage: "Foundation", details: "Develop a strong understanding of business and technology. A degree in engineering or business is a great start." }, { stage: "Skill Building", details: "Learn about market research, user personas, and project management (Agile/Scrum). Strong communication skills are key." }, { stage: "Experience", details: "Often, people transition into product management from roles like engineering, marketing, or data analysis. Seek associate PM roles." } ] },
+        { title: "Graphic Designer", archetype: "Creative", tags: ["Art & Design"], description: "Create visual concepts to communicate ideas that inspire, inform, and captivate consumers.", roadmap: [ { stage: "Foundation", details: "Master the Adobe Creative Suite (Photoshop, Illustrator, InDesign). Build a strong understanding of visual theory." }, { stage: "Portfolio Development", details: "Create a diverse portfolio with personal projects, branding concepts, and digital art. This is your most important asset." }, { stage: "Gaining Experience", details: "Start with freelance work on platforms like Upwork or Fiverr. Seek internships at design agencies or in-house creative teams." } ] },
+        { title: "School Counselor", archetype: "Social", tags: ["Psychology", "Literature"], description: "Help students develop academic and social skills, and guide them in their career planning.", roadmap: [ { stage: "Education", details: "A Bachelor's in Psychology or Education is a good start, followed by a Master's in School Counseling." }, { stage: "Internship & Certification", details: "Complete the required hours of supervised internship experience. Pass state certification exams to become licensed." }, { stage: "Continuing Education", details: "Stay updated with the latest in educational psychology and career development trends to provide the best guidance." } ] },
+    ];
+    
+    // --- APPLICATION STATE ---
+    let currentQuizQuestion = 0;
+    const userAnswers = [];
+    const userProfile = {};
+    const sections = ['landing', 'onboarding', 'quiz', 'recommendations', 'roadmap'];
+
+    // --- LOGIC ---
+    function showNext(sectionId, isBackward = false) {
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            if (id === sectionId) {
+                el.classList.remove('hidden', 'fade-out');
+                el.classList.add('fade-in');
+            } else {
+                el.classList.add('hidden');
+                el.classList.remove('fade-in');
+            }
+        });
+        document.getElementById('restartButton').classList.toggle('hidden', sectionId === 'landing');
+
+        // Special handling for backward navigation to prevent re-rendering
+        if(isBackward && sectionId === 'recommendations') {
+             return; // Don't re-render recommendations
+        }
+
+        // Logic to run when a section becomes visible
+        if (sectionId === 'quiz') {
+            if (isBackward) return; // Prevent re-rendering quiz if going back
+            captureProfileData();
+            displayQuestion();
+        } else if (sectionId === 'recommendations') {
+            if (isBackward) return;
+            showRecommendations();
+        }
+    }
+
+    function captureProfileData() {
+        const form = document.getElementById('profileForm');
+        userProfile.educationStage = form.educationStage.value;
+        userProfile.stream = form.stream.value;
+        userProfile.subjects = Array.from(document.querySelectorAll('#subject-tags .bg-indigo-600')).map(tag => tag.textContent);
+    }
+
+    function displayQuestion() {
+        if (currentQuizQuestion >= quizQuestions.length) {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-analysis').classList.remove('hidden');
+            setTimeout(() => {
+                showNext('recommendations');
+            }, 2000);
+            return;
+        }
+
+        const quizContainer = document.getElementById('quiz-container');
+        const q = quizQuestions[currentQuizQuestion];
+        quizContainer.innerHTML = `
+            <h4 class="text-xl font-semibold text-center mb-6">${q.question}</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                ${q.options.map((option, index) => `
+                    <button 
+                        class="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-400 transition-colors"
+                        onclick="selectAnswer('${option.archetype}')"
+                    >
+                        ${option.text}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+        // Update Progress
+        const progress = ((currentQuizQuestion + 1) / quizQuestions.length) * 100;
+        document.getElementById('progressBar').style.width = `${progress}%`;
+        document.getElementById('questionCounter').textContent = `Question ${currentQuizQuestion + 1} of ${quizQuestions.length}`;
+    }
+
+    function selectAnswer(archetype) {
+        userAnswers.push(archetype);
+        currentQuizQuestion++;
+        displayQuestion();
+    }
+    
+    function calculateArchetype() {
+        const counts = userAnswers.reduce((acc, vote) => {
+            acc[vote] = (acc[vote] || 0) + 1;
+            return acc;
+        }, {});
+        return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+    }
+
+    function getRecommendations() {
+        const finalArchetype = calculateArchetype();
+        userProfile.archetype = finalArchetype;
+        
+        // Simple scoring algorithm
+        const scoredCareers = careers.map(career => {
+            let score = 0;
+            // Archetype match is most important
+            if (career.archetype === finalArchetype) {
+                score += 10;
+            }
+            // Subject match is a bonus
+            userProfile.subjects.forEach(subject => {
+                if (career.tags.includes(subject)) {
+                    score += 5;
+                }
+            });
+            return { ...career, score };
+        });
+        
+        // Sort by score and return top 3
+        return scoredCareers.sort((a, b) => b.score - a.score).slice(0, 3);
+    }
+    
+    function showRecommendations() {
+        const recommendations = getRecommendations();
+        const container = document.getElementById('recommendations-container');
+        const archetypeResultEl = document.getElementById('archetypeResult');
+        
+        archetypeResultEl.textContent = archetypes[userProfile.archetype].name;
+        container.innerHTML = ''; // Clear previous
+        
+        recommendations.forEach(career => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-6 rounded-xl shadow-lg border border-gray-200 cursor-pointer card-hover-effect";
+            card.innerHTML = `
+                <h4 class="text-xl font-bold text-gray-900">${career.title}</h4>
+                <p class="text-gray-600 mt-2 mb-4 text-sm">${career.description}</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    ${career.tags.map(tag => `<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}
+                </div>
+                <button class="w-full bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-200">View Roadmap</button>
+            `;
+            card.onclick = () => showRoadmap(career);
+            container.appendChild(card);
+        });
+    }
+
+    function showRoadmap(career) {
+        document.getElementById('roadmapTitle').textContent = career.title;
+        document.getElementById('roadmapDescription').textContent = career.description;
+        const container = document.getElementById('roadmap-container');
+        container.innerHTML = '';
+        
+        career.roadmap.forEach((step, index) => {
+            const stepEl = document.createElement('div');
+            stepEl.className = 'relative';
+            stepEl.innerHTML = `
+                <div class="absolute -left-9 top-1 w-5 h-5 bg-indigo-600 rounded-full border-4 border-white"></div>
+                <p class="text-sm font-semibold text-indigo-600">${step.stage}</p>
+                <h5 class="font-semibold text-lg text-gray-800">${step.title || ''}</h5>
+                <p class="text-gray-600">${step.details}</p>
+            `;
+            container.appendChild(stepEl);
+        });
+        
+        showNext('roadmap');
+    }
+
+    function restartJourney() {
+        currentQuizQuestion = 0;
+        userAnswers.length = 0;
+        Object.keys(userProfile).forEach(key => delete userProfile[key]);
+        document.getElementById('profileForm').reset();
+        setupSubjectTags(); // Reset subject tags
+        showNext('landing');
+    }
+
+    function setupSubjectTags() {
+        const container = document.getElementById('subject-tags');
+        container.innerHTML = '';
+        subjects.forEach(subject => {
+            const tag = document.createElement('button');
+            tag.type = 'button';
+            tag.textContent = subject;
+            tag.className = "px-3 py-1 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors";
+            tag.onclick = () => {
+                tag.classList.toggle('bg-indigo-600');
+                tag.classList.toggle('text-white');
+                tag.classList.toggle('border-indigo-600');
+                tag.classList.toggle('text-gray-700');
+                tag.classList.toggle('border-gray-300');
+            };
+            container.appendChild(tag);
+        });
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = () => {
+        setupSubjectTags();
+    };
+</script>
+
+</body>
+</html>
